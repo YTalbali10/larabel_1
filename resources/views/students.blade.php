@@ -3,90 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management</title>
+    <title>Car Management</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .student { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .student h3 { margin: 0; }
-        .student p { margin: 5px 0; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .car { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #fff; }
+        .car h3 { margin: 0; color: #333; }
+        .car p { margin: 5px 0; color: #555; }
+        button { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
+        .delete-btn { background-color: red; color: white; border: none; border-radius: 3px; }
+        .edit-btn { background-color: blue; color: white; border: none; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <h1>Student Management</h1>
-    <div id="students">
-        <!-- Students will be loaded here -->
+    <div class="container">
+        <h1>Car Management</h1>
+        <div id="cars">
+            <!-- Cars will be loaded here -->
+        </div>
+
+        <h2>Add New Car</h2>
+        <form id="carForm">
+            <input type="text" id="brand" placeholder="Brand" required>
+            <input type="text" id="model" placeholder="Model" required>
+            <input type="number" id="year" placeholder="Year" required>
+            <input type="number" id="price" placeholder="Price" required>
+            <input type="text" id="color" placeholder="Color" required>
+            <button type="submit">Add Car</button>
+        </form>
     </div>
 
-    <h2>Add New Student</h2>
-    <form id="studentForm">
-        <input type="text" id="nia" placeholder="NIA" required>
-        <input type="text" id="dni" placeholder="DNI" required>
-        <input type="text" id="name" placeholder="Name" required>
-        <input type="text" id="phone" placeholder="Phone" required>
-        <input type="text" id="location" placeholder="Location" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <button type="submit">Add Student</button>
-    </form>
-
     <script>
-        // Load students on page load
-        fetch('/api/students')
+        // Load cars on page load
+        fetch('/api/cars')
             .then(response => response.json())
             .then(data => {
-                const studentsContainer = document.getElementById('students');
-                data.forEach(student => {
-                    studentsContainer.innerHTML += `
-                        <div class="student" data-id="${student.id}">
-                            <h3>${student.name} (NIA: ${student.nia})</h3>
-                            <p>DNI: ${student.dni}</p>
-                            <p>Phone: ${student.phone}</p>
-                            <p>Location: ${student.location}</p>
-                            <p>Email: ${student.email}</p>
-                            <button onclick="editStudent(${student.id})">Edit</button>
-                            <button onclick="deleteStudent(${student.id})">Delete</button>
+                const carsContainer = document.getElementById('cars');
+                data.forEach(car => {
+                    carsContainer.innerHTML += `
+                        <div class="car" data-id="${car.id}">
+                            <h3>${car.brand} ${car.model} (${car.year})</h3>
+                            <p>Price: $${car.price}</p>
+                            <p>Color: ${car.color}</p>
+                            <button class="edit-btn" onclick="editCar(${car.id})">Edit</button>
+                            <button class="delete-btn" onclick="deleteCar(${car.id})">Delete</button>
                         </div>
                     `;
                 });
             });
 
-        // Add new student
-        document.getElementById('studentForm').addEventListener('submit', function (e) {
+        // Add new car
+        document.getElementById('carForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            const nia = document.getElementById('nia').value;
-            const dni = document.getElementById('dni').value;
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const location = document.getElementById('location').value;
-            const email = document.getElementById('email').value;
+            const brand = document.getElementById('brand').value;
+            const model = document.getElementById('model').value;
+            const year = document.getElementById('year').value;
+            const price = document.getElementById('price').value;
+            const color = document.getElementById('color').value;
 
-            fetch('/api/students', {
+            fetch('/api/cars', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nia, dni, name, phone, location, email })
+                body: JSON.stringify({ brand, model, year, price, color })
             })
             .then(response => response.json())
-            .then(student => {
-                const studentsContainer = document.getElementById('students');
-                studentsContainer.innerHTML += `
-                    <div class="student" data-id="${student.id}">
-                        <h3>${student.name} (NIA: ${student.nia})</h3>
-                        <p>DNI: ${student.dni}</p>
-                        <p>Phone: ${student.phone}</p>
-                        <p>Location: ${student.location}</p>
-                        <p>Email: ${student.email}</p>
-                        <button onclick="editStudent(${student.id})">Edit</button>
-                        <button onclick="deleteStudent(${student.id})">Delete</button>
+            .then(car => {
+                const carsContainer = document.getElementById('cars');
+                carsContainer.innerHTML += `
+                    <div class="car" data-id="${car.id}">
+                        <h3>${car.brand} ${car.model} (${car.year})</h3>
+                        <p>Price: $${car.price}</p>
+                        <p>Color: ${car.color}</p>
+                        <button class="edit-btn" onclick="editCar(${car.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteCar(${car.id})">Delete</button>
                     </div>
                 `;
-                document.getElementById('studentForm').reset();
+                document.getElementById('carForm').reset();
             });
         });
 
-        // Delete student
-        function deleteStudent(id) {
-            fetch(`/api/students/${id}`, { method: 'DELETE' })
+        // Delete car
+        function deleteCar(id) {
+            fetch(`/api/cars/${id}`, { method: 'DELETE' })
                 .then(() => {
-                    document.querySelector(`.student[data-id="${id}"]`).remove();
+                    document.querySelector(`.car[data-id="${id}"]`).remove();
                 });
         }
     </script>
